@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 style="margin-bottom: 20px;">Dashboard
+    {% if role == 'admin' %}<span style="font-size:13px; color:#888;"> (All Users)</span>{% endif %}
+</h2>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="label">Total Income</div>
+        <div class="value income-val">₹{{ summary.total_income }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Total Expenses</div>
+        <div class="value expense-val">₹{{ summary.total_expense }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Balance</div>
+        <div class="value balance-val">₹{{ summary.balance }}</div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    <div class="card">
+        <h3 style="margin-bottom:16px;">Category Breakdown</h3>
+        {% if categories %}
+        <table>
+            <tr><th>Category</th><th>Type</th><th>Total</th></tr>
+            {% for row in categories %}
+            <tr>
+                <td>{{ row.category }}</td>
+                <td><span class="badge-{{ row.type }}">{{ row.type }}</span></td>
+                <td>₹{{ row.total }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p style="color:#999; font-size:14px;">No data yet.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h3 style="margin-bottom:16px;">Monthly Totals</h3>
+        {% if monthly %}
+        <table>
+            <tr><th>Month</th><th>Type</th><th>Total</th></tr>
+            {% for row in monthly %}
+            <tr>
+                <td>{{ row.month }}</td>
+                <td><span class="badge-{{ row.type }}">{{ row.type }}</span></td>
+                <td>₹{{ row.total }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p style="color:#999; font-size:14px;">No data yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card" style="margin-top: 20px;">
+    <h3 style="margin-bottom:16px;">Recent Activity</h3>
+    {% if recent %}
+    <table>
+        <tr><th>Date</th><th>Type</th><th>Category</th><th>Amount</th><th>Notes</th></tr>
+        {% for t in recent %}
+        <tr>
+            <td>{{ t.date }}</td>
+            <td><span class="badge-{{ t.type }}">{{ t.type }}</span></td>
+            <td>{{ t.category }}</td>
+            <td>₹{{ "%.2f"|format(t.amount) }}</td>
+            <td>{{ t.notes or '—' }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p style="color:#999; font-size:14px;">No recent activity.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <h2>Transactions</h2>
+    {% if role == 'admin' %}
+    <a href="{{ url_for('transactions.add_transaction') }}" class="btn btn-primary">+ Add Transaction</a>
+    {% endif %}
+</div>
+
+{% if role in ('analyst', 'admin') %}
+<div class="card" style="margin-bottom: 20px;">
+    <h4 style="margin-bottom:12px;">Filter</h4>
+    <form method="GET" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
+        <div>
+            <label style="font-size:13px; font-weight:600;">Type</label>
+            <select name="type" style="padding:6px; border:1px solid #ccc; border-radius:4px; font-size:13px;">
+                <option value="">All</option>
+                <option value="income" {% if request.args.get('type')=='income' %}selected{% endif %}>Income</option>
+                <option value="expense" {% if request.args.get('type')=='expense' %}selected{% endif %}>Expense</option>
+            </select>
+        </div>
+        <div>
+            <label style="font-size:13px; font-weight:600;">Category</label>
+            <input type="text" name="category" value="{{ request.args.get('category','') }}"
+                   placeholder="e.g. Food" style="padding:6px; border:1px solid #ccc; border-radius:4px; font-size:13px; width:120px;">
+        </div>
+        <div>
+            <label style="font-size:13px; font-weight:600;">From</label>
+            <input type="date" name="date_from" value="{{ request.args.get('date_from','') }}"
+                   style="padding:6px; border:1px solid #ccc; border-radius:4px; font-size:13px;">
+        </div>
+        <div>
+            <label style="font-size:13px; font-weight:600;">To</label>
+            <input type="date" name="date_to" value="{{ request.args.get('date_to','') }}"
+                   style="padding:6px; border:1px solid #ccc; border-radius:4px; font-size:13px;">
+        </div>
+        <button type="submit" class="btn btn-primary">Apply</button>
+        <a href="{{ url_for('transactions.list_transactions') }}" class="btn btn-secondary">Clear</a>
+    </form>
+</div>
+{% endif %}
+
+<div class="card">
+    {% if transactions %}
+    <table>
+        <tr>
+            <th>Date</th><th>Type</th><th>Category</th><th>Amount</th><th>Notes</th>
+            {% if role == 'admin' %}<th>Actions</th>{% endif %}
+        </tr>
+        {% for t in transactions %}
+        <tr>
+            <td>{{ t.date }}</td>
+            <td><span class="badge-{{ t.type }}">{{ t.type }}</span></td>
+            <td>{{ t.category }}</td>
+            <td>₹{{ "%.2f"|format(t.amount) }}</td>
+            <td>{{ t.notes or '—' }}</td>
+            {% if role == 'admin' %}
+            <td>
+                <a href="{{ url_for('transactions.edit_transaction', txn_id=t.id) }}" class="btn btn-secondary" style="padding:4px 10px; font-size:12px;">Edit</a>
+                <form method="POST" action="{{ url_for('transactions.delete_transaction_route', txn_id=t.id) }}"
+                      style="display:inline;" onsubmit="return confirm('Delete this record?');">
+                    <button type="submit" class="btn btn-danger" style="padding:4px 10px; font-size:12px;">Delete</button>
+                </form>
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p style="color:#999; font-size:14px;">No transactions found.</p>
+    {% endif %}
+</div>
+{% endblock %}

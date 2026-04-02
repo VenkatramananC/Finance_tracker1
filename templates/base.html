@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Tracker</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; background: #f4f6f9; color: #333; }
+
+        nav {
+            background: #1a1a2e;
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav a { color: #a0c4ff; text-decoration: none; margin-left: 16px; font-size: 14px; }
+        nav a:hover { color: white; }
+        nav .brand { font-size: 18px; font-weight: bold; color: white; }
+
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 16px; }
+
+        .flash { padding: 10px 16px; margin-bottom: 16px; border-radius: 4px; font-size: 14px; }
+        .flash.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .flash.error   { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .flash.info    { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+
+        .card { background: white; border-radius: 8px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.07); }
+
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f0f2f5; font-weight: 600; }
+        tr:hover td { background: #fafafa; }
+
+        .btn { display: inline-block; padding: 8px 16px; border-radius: 4px; font-size: 14px;
+               text-decoration: none; border: none; cursor: pointer; }
+        .btn-primary { background: #1a1a2e; color: white; }
+        .btn-primary:hover { background: #16213e; }
+        .btn-danger  { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; }
+        .btn-secondary { background: #6c757d; color: white; }
+
+        .badge-income  { background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 12px; font-size: 12px; }
+        .badge-expense { background: #f8d7da; color: #721c24; padding: 2px 8px; border-radius: 12px; font-size: 12px; }
+
+        form .form-group { margin-bottom: 16px; }
+        form label { display: block; margin-bottom: 4px; font-size: 14px; font-weight: 600; }
+        form input, form select, form textarea {
+            width: 100%; padding: 8px 12px; border: 1px solid #ccc;
+            border-radius: 4px; font-size: 14px;
+        }
+        form input:focus, form select:focus { outline: none; border-color: #1a1a2e; }
+
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+        .stat-card { background: white; border-radius: 8px; padding: 20px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.07); }
+        .stat-card .value { font-size: 28px; font-weight: bold; margin-top: 8px; }
+        .stat-card .label { font-size: 13px; color: #666; }
+        .income-val { color: #28a745; }
+        .expense-val { color: #dc3545; }
+        .balance-val { color: #007bff; }
+
+        .role-badge { font-size: 12px; background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 12px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <span class="brand">💰 Finance Tracker</span>
+        {% if session.username %}
+        <div>
+            <span style="font-size:13px; color:#ccc;">{{ session.username }}
+                <span class="role-badge">{{ session.role }}</span>
+            </span>
+            <a href="{{ url_for('summary.dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('transactions.list_transactions') }}">Transactions</a>
+            {% if session.role == 'admin' %}
+            <a href="{{ url_for('transactions.add_transaction') }}">+ Add</a>
+            <a href="{{ url_for('auth.list_users') }}">Users</a>
+            {% endif %}
+            <a href="{{ url_for('auth.logout') }}">Logout</a>
+        </div>
+        {% endif %}
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
