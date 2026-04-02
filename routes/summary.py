@@ -21,7 +21,6 @@ def dashboard():
     role    = session.get('role')
     user_id = session.get('user_id')
 
-    # Admin sees global stats; others see own
     uid = None if role == 'admin' else user_id
 
     summary    = get_summary(uid)

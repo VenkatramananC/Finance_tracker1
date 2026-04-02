@@ -1,4 +1,5 @@
 from database import get_connection
+import hashlib
 
 
 VALID_ROLES = ('viewer', 'analyst', 'admin')
@@ -13,10 +14,9 @@ def create_user(username, password, role='viewer'):
     conn = get_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute(
-            "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
-            (username, password, role)
-        )
+        hashed = hashlib.sha256(password.encode()).hexdigest()
+        cursor.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+        (username, hashed, role))
         conn.commit()
         return cursor.lastrowid, None
     except Exception as e:
@@ -54,6 +54,7 @@ def get_all_users():
 
 def authenticate_user(username, password):
     user = get_user_by_username(username)
-    if user and user['password'] == password:
+    hashed = hashlib.sha256(password.encode()).hexdigest()
+    if user and user['password'] == hashed:
         return user
     return None

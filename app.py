@@ -1,7 +1,6 @@
 import sys
 import os
 
-# Ensure project root is in path so imports work
 sys.path.insert(0, os.path.dirname(__file__))
 
 from flask import Flask, redirect, url_for

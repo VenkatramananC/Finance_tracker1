@@ -35,13 +35,11 @@ def list_transactions():
     role = session.get('role')
     user_id = session.get('user_id')
 
-    # Analyst and admin can filter; viewer sees own records
     type_filter     = request.args.get('type') if role in ('analyst', 'admin') else None
     category_filter = request.args.get('category') if role in ('analyst', 'admin') else None
     date_from       = request.args.get('date_from') if role in ('analyst', 'admin') else None
     date_to         = request.args.get('date_to') if role in ('analyst', 'admin') else None
 
-    # Admin sees all; others see only own
     filter_user_id = None if role == 'admin' else user_id
 
     transactions = get_all_transactions(

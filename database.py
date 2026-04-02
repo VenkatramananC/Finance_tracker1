@@ -1,12 +1,13 @@
 import sqlite3
 import os
+import hashlib
 
 DATABASE = "finance.db"
 
 
 def get_connection():
     conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row  # allows dict-like access
+    conn.row_factory = sqlite3.Row 
     return conn
 
 
@@ -36,14 +37,11 @@ def init_db():
         );
     """)
 
-    # Seed a default admin user if none exists
     cursor.execute("SELECT COUNT(*) FROM users")
     if cursor.fetchone()[0] == 0:
-        cursor.execute("""
-            INSERT INTO users (username, password, role)
-            VALUES ('admin', 'admin123', 'admin')
-        """)
+        hashed = hashlib.sha256("admin123".encode()).hexdigest()
+        cursor.execute("""INSERT INTO users (username, password, role)
+        VALUES ('admin', ?, 'admin')""", (hashed,))
 
     conn.commit()
     conn.close()
-    print("[DB] Database initialized.")

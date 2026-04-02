@@ -1,6 +1,4 @@
 from database import get_connection
-from collections import defaultdict
-
 
 def get_summary(user_id=None):
     conn = get_connection()
