@@ -1,25 +1,3 @@
-"""
-Playwright + Pytest tests for the Finance Tracker Flask app.
-Run against a locally running instance: http://127.0.0.1:5000
-
-Confirmed from templates/login.html, routes/auth.py, and database.py:
-- Login form fields: input[name="username"], input[name="password"]
-- Submit button: <button type="submit">Login</button>
-- Successful login -> redirects to transactions.list_transactions,
-  flash message: "Welcome, {username}! Role: {role}" (category: success)
-- Failed login -> stays on /login,
-  flash message: "Invalid username or password." (category: error)
-- /register has fields: username, password, role (viewer/analyst/admin)
-  -> on success, flash "Account created. Please login." + redirect to /login
-- /users is admin-only:
-    - non-admin visiting it -> flash "Access denied." + redirect to
-      transactions.list_transactions
-    - admin visiting it -> renders users.html (list of users)
-- Default seeded user (created by init_db() when users table is empty):
-    username: admin
-    password: admin123
-    role:     admin
-"""
 
 import time
 import pytest
