@@ -41,3 +41,26 @@ jobs:
         with:
           name: flask-app-log
           path: app.log
+
+
+  docker-build-and-push:
+    needs: test                     # only runs if the 'test' job passed
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'   # only push images from main, not other branches
+ 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+ 
+      - name: Docker Login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+ 
+      - name: Docker Image Build
+        run: docker build -t ${{ vars.DOCKER_USERNAME }}/finance-tracker .
+ 
+      - name: Docker Image Push
+        run: docker push ${{ vars.DOCKER_USERNAME }}/finance-tracker
+ 
