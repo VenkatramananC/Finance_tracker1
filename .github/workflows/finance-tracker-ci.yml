@@ -63,4 +63,17 @@ jobs:
  
       - name: Docker Image Push
         run: docker push ${{ vars.DOCKER_USERNAME }}/finance-tracker
+        
+  deploy:
+    needs: docker-build-and-push        # only runs if the image was built AND pushed
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
  
+    steps:
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+ 
+      - name: Trigger Railway redeploy (pull latest image)
+        run: railway redeploy --service finance-tracker --yes
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
