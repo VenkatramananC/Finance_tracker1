@@ -28,7 +28,7 @@ def register(page: Page, username: str, password: str, role: str):
     page.fill("input[name='username']", username)
     page.fill("input[name='password']", password)
     page.select_option("select[name='role']", role)
-    page.click("button:has-text('Create Account')")
+    page.get_by_role("button", name="sumbit").click()
 
 
 def register_and_login(page: Page, role: str) -> str:
