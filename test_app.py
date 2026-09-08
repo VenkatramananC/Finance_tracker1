@@ -11,7 +11,7 @@ TEST_PASSWORD = "TestPass123!"
 
 
 def unique_username(prefix: str) -> str:
-    """Avoid username collisions across test runs / CI re-runs."""
+    
     return f"{prefix}_{int(time.time() * 1000)}"
 
 
@@ -31,16 +31,11 @@ def register(page: Page, username: str, password: str, role: str):
 
 
 def register_and_login(page: Page, role: str) -> str:
-    """Registers a fresh user with the given role, then logs in as them."""
     username = unique_username(role)
     register(page, username, TEST_PASSWORD, role)
     login(page, username, TEST_PASSWORD)
     return username
 
-
-# ---------------------------------------------------------------------------
-# Basic smoke tests
-# ---------------------------------------------------------------------------
 
 def test_home_page_loads(page: Page):
     page.goto(BASE_URL)
